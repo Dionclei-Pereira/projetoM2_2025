@@ -1,9 +1,19 @@
 package entidades;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Pessoa {
+
+    public static List<Pessoa> pessoas = new ArrayList<>();
 
     private String nome;
     private String cpf;
+
+    public Pessoa(String nome, String cpf) {
+        this.nome = nome;
+        this.cpf = cpf;
+    }
 
     public String getNome() {
         return this.nome;

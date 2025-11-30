@@ -1,10 +1,17 @@
 package entidades;
 
+import java.util.UUID;
+
 public class Funcionario extends Pessoa {
 
-    private int matricula;
+    private String matricula;
 
-    public int getMatricula() {
+    public Funcionario(String nome, String cpf) {
+        super(nome, cpf);
+        this.matricula = UUID.randomUUID().toString();
+    }
+
+    public String getMatricula() {
         return this.matricula;
     }
 }
