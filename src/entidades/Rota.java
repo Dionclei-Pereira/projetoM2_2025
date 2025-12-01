@@ -1,11 +1,28 @@
 package entidades;
 
+import java.util.UUID;
+
 public class Rota {
 
-    private int idRota;
-    private int estacaoOrigem;
-    private int estacaoDestino;
-    private double distanciaKM;
-    private int tempoEstimadoMinutos;
+    private String idRota;
+    private Estacao estacaoOrigem;
+    private Estacao estacaoDestino;
 
+    public Rota(Estacao estacaoOrigem, Estacao estacaoDestino) {
+        this.estacaoOrigem = estacaoOrigem;
+        this.estacaoDestino = estacaoDestino;
+    }
+
+    public Estacao getEstacaoOrigem() {
+        return this.estacaoOrigem;
+    }
+
+    public Estacao getEstacaoDestino() {
+        return this.estacaoDestino;
+    }
+
+    @Override
+    public String toString() {
+        return "[ " + estacaoOrigem.getNome() + " -> " + estacaoDestino.getNome() + " ]";
+    }
 }

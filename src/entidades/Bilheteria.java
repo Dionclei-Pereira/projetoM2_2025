@@ -2,12 +2,20 @@ package entidades;
 
 public class Bilheteria {
 
-    private static int ticketCount = 0;
+    private int ticketCount;
     private Estacao estacao;
 
+    public Bilheteria(Estacao estacao) {
+        this.estacao = estacao;
+    }
+
     public void emitirTicket(Passageiro passageiro, Missao missao) {
-        Ticket ticker = new Ticket(ticketCount++, missao);
+        this.ticketCount++;
+        Ticket ticker = new Ticket(missao);
         passageiro.setTicket(ticker);
     }
 
+    public int getTicketCount() {
+        return this.ticketCount;
+    }
 }
