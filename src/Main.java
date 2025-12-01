@@ -1,10 +1,10 @@
 import entidades.*;
+import uteis.Formatacao;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,14 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class Main {
+
+    private static Instant instant = Instant.now();
+
     public static void main(String[] args) {
         System.out.println(UUID.randomUUID().toString());
 
         Scanner sc = new Scanner(System.in);
+        Instant instant = Instant.now();
 
         boolean continuar = true;
         while (continuar) {
@@ -27,10 +31,27 @@ public class Main {
         sc.close();
     }
 
+    private static void passarDia() {
+        instant = instant.atZone(ZoneId.systemDefault()).plusDays(1).toInstant();
+    }
+
+    private static void atualizarMissoes() {
+        for (Estacao e : Estacao.estacoes) {
+            for (Missao m : e.getMissoes()) {
+                m.atualizarEstado(instant);
+            }
+        }
+    }
+
     private static boolean imprimirTela(Scanner sc) {
-        System.out.println("|----------------------|");
+
+        atualizarMissoes();
+
+        System.out.println("|----------------------| " + Formatacao.formatarInstant(instant));
         System.out.println("1 - Pessoas");
-        System.out.println("2 - Estações e Missões");
+        System.out.println("2 - Estações, Missões e Tickets");
+        System.out.println("3 - Trens e Vagões");
+        System.out.println("4 - Passar o dia");
         System.out.println("0 - Sair");
         System.out.println("|----------------------|");
 
@@ -41,7 +62,13 @@ public class Main {
                 menuPessoas(sc);
                 break;
             case 2:
-                menuEstacoesVagoes(sc);
+                menuEstacoesMissoes(sc);
+                break;
+            case 3:
+                menuTrensVagoes(sc);
+                break;
+            case 4:
+                passarDia();
                 break;
             case 0:
                 return false;
@@ -55,7 +82,143 @@ public class Main {
         return true;
     }
 
-    private static void menuEstacoesVagoes(Scanner sc) {
+    private static void menuTrensVagoes(Scanner sc) {
+        while (true) {
+
+            System.out.println("|---------------------|");
+            System.out.println("1 - Criar Trem");
+            System.out.println("2 - Criar Vagão");
+            System.out.println("3 - Associar Vagão");
+            System.out.println("3 - Associar Missão");
+            System.out.println("5 - Associar Maquinista");
+            System.out.println("6 - Mostrar Trens e Vagões");
+            System.out.println("0 - Voltar");
+            System.out.println("|---------------------|");
+
+            byte opcao = sc.nextByte();
+            switch (opcao) {
+                case 1:
+                    criarTrem(sc);
+                    break;
+                case 2:
+                    criarVagao(sc);
+                    break;
+                case 3:
+                    assosiarVagao(sc);
+                    break;
+                case 4:
+                    associarMissao(sc);
+                    break;
+                case 5:
+                    assosiarMaquinista(sc);
+                    break;
+                case 6:
+                    mostrarTrensVagoes(sc);
+                    break;
+                case 0:
+                    return;
+                default:
+                    System.out.println();
+                    System.out.println("Opção inválida");
+                    System.out.println();
+                    break;
+            }
+        }
+    }
+
+    private static void mostrarTrensVagoes(Scanner sc) {
+        sc.nextLine();
+        System.out.println("Trens:");
+        System.out.println();
+        for (Trem t : Trem.trens) {
+            String cima = "    ||";
+            String meio = "[-----]";
+            String baixo = " 0   0 ";
+            for (Vagao v : t.getVagoes()) {
+                if (v instanceof VagaoPassageiro) {
+                    meio += "-[Passageiro]";
+                    baixo += "  0        0 ";
+                } else {
+                    meio += "-[Carga]";
+                    baixo += "  0   0 ";
+                }
+            }
+
+            System.out.println("Frota: " + t.getNumeroFrota());
+            if (t.getMissaoAtual() != null) {
+                t.getMissaoAtual().exibirInfo();
+            }
+            System.out.println(cima);
+            System.out.println(meio);
+            System.out.println(baixo);
+            System.out.println();
+        }
+        System.out.println("Vagões Avulso: ");
+        for (Vagao v : Vagao.vagoes) {
+            if (v.getTrem() == null) {
+                if (v instanceof VagaoPassageiro) {
+                    System.out.println("-[oPassageiro]");
+                    System.out.println("  0         0");
+                } else {
+                    System.out.println("-[Carga]");
+                    System.out.println("  0   0");
+                }
+            }
+        }
+        System.out.println();
+        sc.nextLine();
+    }
+
+    private static void assosiarVagao(Scanner sc) {
+        Vagao vagao = selecionarVagao(sc);
+        if (vagao == null) {
+            return;
+        }
+
+        Trem trem = selecionarTrem(sc);
+        if (trem == null) {
+            return;
+        }
+
+        trem.engatarVagao(vagao);
+
+        System.out.println("Vagão engatado com sucesso!");
+    }
+
+    private static void criarTrem(Scanner sc) {
+
+        System.out.println("Digite o numero da frota");
+        int frota = sc.nextInt();
+        Trem trem = new Trem(frota);
+
+        Trem.trens.add(trem);
+        System.out.println("Trem criado com sucesso!");
+        sc.nextLine();
+    }
+
+    private static void criarVagao(Scanner sc) {
+        sc.nextLine();
+
+        System.out.println("Tipo do vagão? [Carga/Passageiro]");
+        String tipo = sc.nextLine().toUpperCase();
+
+        if (tipo.equals("CARGA")) {
+            VagaoCarga vagaoCarga = new VagaoCarga();
+            Vagao.vagoes.add(vagaoCarga);
+        } else if (tipo.equals("PASSAGEIRO")) {
+            VagaoPassageiro vagaoPassageiro = new VagaoPassageiro();
+            Vagao.vagoes.add(vagaoPassageiro);
+        } else {
+            System.out.println("Tipo inválido!");
+            sc.nextLine();
+            return;
+        }
+
+        System.out.println("Vagão criado com sucesso!");
+        sc.nextLine();
+    }
+
+    private static void menuEstacoesMissoes(Scanner sc) {
         while (true) {
             System.out.println("|---------------------|");
             System.out.println("1 - Criar Estação");
@@ -126,7 +289,7 @@ public class Main {
         System.out.println("1 - Ver todas missões");
         System.out.println("2 - Buscar por estação");
         System.out.println("|---------------------|");
-        int  opcao = sc.nextInt();
+        int opcao = sc.nextInt();
 
         if (opcao == 1) {
             for (Estacao e : Estacao.estacoes) {
@@ -151,8 +314,8 @@ public class Main {
         sc.nextLine();
 
 
-        Estacao origem = selecionarEstacao (sc, "Escolha a estação de inicio");
-        Estacao destino = selecionarEstacao (sc, "Escolha a estação de destino");
+        Estacao origem = selecionarEstacao(sc, "Escolha a estação de inicio");
+        Estacao destino = selecionarEstacao(sc, "Escolha a estação de destino");
 
         if (origem == null || destino == null) {
             sc.nextLine();
@@ -190,6 +353,117 @@ public class Main {
 
         System.out.println("Missão criada com sucesso");
         sc.nextLine();
+    }
+
+    private static void assosiarMaquinista(Scanner sc) {
+        sc.nextLine();
+        Maquinista maquinista = (Maquinista) selecionarPessoa(sc, "Selecione um maquinista", Maquinista.class);
+        if (maquinista == null) {
+            return;
+        }
+        if (maquinista.getTrem() != null) {
+            System.out.println("Este maquinista já pertence a um trem");
+            sc.nextLine();
+            return;
+        }
+
+        Trem trem = selecionarTrem(sc);
+        if (trem == null) {
+            return;
+        }
+        if (trem.getMaquinista() != null) {
+            System.out.println("Este trem já tem um maquinista!");
+            sc.nextLine();
+            return;
+        }
+
+        trem.setMaquinista(maquinista);
+        System.out.println("Maquinista associado com sucesso!");
+    }
+
+    private static void associarMissao(Scanner sc) {
+        sc.nextLine();
+        Missao missao = selecionarMissao(sc);
+        if (missao == null) {
+            return;
+        }
+
+        if (missao.getTrem() != null) {
+            System.out.println("Essa missão já está associada a um trem!");
+            sc.nextLine();
+            return;
+        }
+
+        Trem trem = selecionarTrem(sc);
+        if (trem == null) {
+            return;
+        }
+
+        if (trem.getMissaoAtual() != null) {
+            System.out.println("Este trem já possui uma missão!");
+            sc.nextLine();
+            return;
+        }
+
+        trem.setMissaoAtual(missao);
+        System.out.println("Missão associada com sucesso!");
+        sc.nextLine();
+    }
+
+    private static Trem selecionarTrem(Scanner sc) {
+
+        int i = 0;
+
+        for (Trem t : Trem.trens) {
+            i++;
+            System.out.println("[" + i + "] " + "[--" + t.getNumeroFrota() + "--]");
+        }
+
+        System.out.println("Selecione um trem");
+        int index = sc.nextInt();
+
+        if (index > Trem.trens.size()) {
+            System.out.println("Trem inválido!");
+            sc.nextLine();
+            return null;
+        }
+
+        return Trem.trens.get(index - 1);
+    }
+
+    private static Vagao selecionarVagao(Scanner sc) {
+        List<Vagao> vagoes = new ArrayList<>();
+        sc.nextLine();
+        for (Vagao v : Vagao.vagoes) {
+            if (v.getTrem() == null) {
+                vagoes.add(v);
+            }
+        }
+
+        int i = 0;
+
+        for (Vagao v : vagoes) {
+            i++;
+            String tipo;
+
+            if (v instanceof VagaoPassageiro) {
+                tipo = "Passageiro";
+            } else {
+                tipo = "Carga";
+            }
+            System.out.println("[" + i + "] " + "[" + tipo + "]");
+        }
+
+        System.out.println("Selecione um vagão");
+        int index = sc.nextInt();
+
+        if (index > vagoes.size()) {
+            System.out.println("Vagão inválido!");
+            sc.nextLine();
+            return null;
+        }
+
+        return vagoes.get(index - 1);
     }
 
     private static Estacao selecionarEstacao(Scanner sc, String message) {
@@ -293,7 +567,7 @@ public class Main {
     private static void criarEstacao(Scanner sc) {
         sc.nextLine();
         System.out.println("Digite o nome da estação");
-        String  nome = sc.nextLine();
+        String nome = sc.nextLine();
 
         Estacao estacao = new Estacao(nome);
         estacao.criarBilheteria();

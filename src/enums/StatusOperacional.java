@@ -5,7 +5,6 @@ public enum StatusOperacional {
     EM_VIAGEM,
     PARADA,
     MANUTENCAO,
-    PARADA_EMERGENCIAL,
-    EMBARCACAO
+    PARADA_EMERGENCIAL
 
 }

@@ -13,4 +13,12 @@ public final class Maquinista extends Funcionario{
 
     }
 
+    public void setTrem(Trem trem) {
+        this.trem = trem;
+    }
+
+    public Trem getTrem() {
+        return this.trem;
+    }
+
 }

@@ -11,8 +11,7 @@ public class Bilheteria {
 
     public void emitirTicket(Passageiro passageiro, Missao missao) {
         this.ticketCount++;
-        Ticket ticker = new Ticket(missao);
-        passageiro.setTicket(ticker);
+        Ticket ticker = new Ticket(missao, passageiro);
     }
 
     public int getTicketCount() {
