@@ -28,7 +28,7 @@ public class Missao {
         this.rota = rota;
     }
 
-    public void atualizarEstado(Instant instant) {
+    public void atualizarEstado(Instant instant)    {
         switch (this.statusMissao) {
             case AGENDADA:
                 if (instant.isAfter(this.dataPartida)) {

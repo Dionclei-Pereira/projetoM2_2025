@@ -12,7 +12,6 @@ public class Ticket {
         this.idTicket = UUID.randomUUID().toString();
         this.missao = missao;
         this.passageiro = passageiro;
-        missao.addTicket(this);
         passageiro.setTicket(this);
     }
 

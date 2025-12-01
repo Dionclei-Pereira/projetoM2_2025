@@ -9,9 +9,11 @@ public class Bilheteria {
         this.estacao = estacao;
     }
 
-    public void emitirTicket(Passageiro passageiro, Missao missao) {
+    public Ticket emitirTicket(Passageiro passageiro, Missao missao) {
         this.ticketCount++;
-        Ticket ticker = new Ticket(missao, passageiro);
+        Ticket ticket = new Ticket(missao, passageiro);
+        missao.addTicket(ticket);
+        return ticket;
     }
 
     public int getTicketCount() {
