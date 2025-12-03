@@ -1,5 +1,7 @@
 package entidades;
 
+import enums.StatusMissao;
+
 public class Bilheteria {
 
     private int ticketCount;
@@ -10,6 +12,11 @@ public class Bilheteria {
     }
 
     public Ticket emitirTicket(Passageiro passageiro, Missao missao) {
+        if (missao.getStatusMissao() != StatusMissao.AGENDADA) {
+            System.out.println("Missão está em andamento ou já foi concluida!");
+            return null;
+        }
+
         this.ticketCount++;
         Ticket ticket = new Ticket(missao, passageiro);
         missao.addTicket(ticket);

@@ -5,8 +5,6 @@ import java.util.List;
 
 public abstract class Pessoa {
 
-    public static List<Pessoa> pessoas = new ArrayList<>();
-
     private String nome;
     private String cpf;
 

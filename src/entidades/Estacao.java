@@ -6,10 +6,7 @@ import java.util.UUID;
 
 public class Estacao {
 
-    public static List<Estacao> estacoes = new ArrayList<>();
-
     private String idEstacao;
-    private List<Trem> trens = new ArrayList();
     private Bilheteria bilheteria;
     private List<Missao> missoes = new ArrayList();
     private String nome;

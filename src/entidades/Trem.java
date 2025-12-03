@@ -7,8 +7,6 @@ import java.util.List;
 
 public class Trem {
 
-    public static List<Trem> trens = new ArrayList<>();
-
     private int numeroFrota;
     private List<Vagao> vagoes = new ArrayList<>();
     private Maquinista maquinista;

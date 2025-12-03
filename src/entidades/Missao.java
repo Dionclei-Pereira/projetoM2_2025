@@ -28,63 +28,46 @@ public class Missao {
         this.rota = rota;
     }
 
-    public void atualizarEstado(Instant instant)    {
-        switch (this.statusMissao) {
-            case AGENDADA:
-                if (instant.isAfter(this.dataPartida)) {
-                    if (this.trem == null) {
-                        this.statusMissao = StatusMissao.CANCELADA;
-                        return;
+    public void finalizarMissao() {
+        this.statusMissao = StatusMissao.CONCLUIDA;
+        this.trem.setMissaoAtual(null);
+
+        for (Vagao v : this.trem.getVagoes()) {
+            if (v instanceof VagaoPassageiro) {
+                ((VagaoPassageiro) v).limparVagao();
+            }
+        }
+
+        this.trem = null;
+    }
+
+
+    public void embarcarPassageiros() {
+        for (Ticket ticket : this.tickets) {
+
+            Passageiro p = ticket.getPassageiro();
+            boolean embarcou = false;
+
+            for (Vagao v : this.trem.getVagoes()) {
+
+                if (v instanceof VagaoPassageiro) {
+                    VagaoPassageiro vp = (VagaoPassageiro) v;
+
+                    if (vp.temEspaco()) {
+                        vp.adicionarPassageiro(p);
+                        embarcou = true;
+                        break;
                     }
-                    if (this.trem.getMaquinista() == null) {
-                        this.statusMissao = StatusMissao.CANCELADA;
-                        return;
-                    }
-
-                    for (Ticket ticket : this.tickets) {
-
-                        Passageiro p = ticket.getPassageiro();
-                        boolean embarcou = false;
-
-                        for (Vagao v : this.trem.getVagoes()) {
-
-                            if (v instanceof VagaoPassageiro) {
-
-                                VagaoPassageiro vp = (VagaoPassageiro) v;
-
-                                if (vp.temEspaco()) {
-                                    vp.adicionarPassageiro(p);
-                                    embarcou = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (!embarcou) {
-                            p.setTicket(null);
-                            System.out.println("Sem vagões disponíveis para o passageiro: " + p.getNome());
-                        }
-                    }
-
-
-                    this.statusMissao = StatusMissao.EM_CURSO;
                 }
-                break;
-            case EM_CURSO:
-                if (instant.isAfter(this.dataChegada)) {
-                    this.statusMissao = StatusMissao.CONCLUIDA;
-                    this.trem.setMissaoAtual(null);
-                    for (Vagao v : this.trem.getVagoes()) {
-                        if (v instanceof VagaoPassageiro) {
-                            ((VagaoPassageiro) v).limparVagao();
-                        }
-                    }
-                    this.trem = null;
-                }
-                break;
+            }
 
+            if (!embarcou) {
+                p.setTicket(null);
+                System.out.println("Sem vagões disponíveis para o passageiro: " + p.getNome());
+            }
         }
     }
+
 
     public Rota getRota() {
         return this.rota;
@@ -112,5 +95,21 @@ public class Missao {
         System.out.println("Chegada: " + Formatacao.formatarInstant(this.dataChegada));
         System.out.println("Status: " + this.statusMissao);
         System.out.println("Rota: " + this.rota.toString());
+    }
+
+    public StatusMissao getStatusMissao() {
+        return this.statusMissao;
+    }
+
+    public void setStatusMissao(StatusMissao statusMissao) {
+        this.statusMissao = statusMissao;
+    }
+
+    public Instant getDataPartida() {
+        return  this.dataPartida;
+    }
+
+    public Instant getDataChegada() {
+        return this.dataChegada;
     }
 }

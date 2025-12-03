@@ -1,4 +1,5 @@
 import entidades.*;
+import enums.StatusMissao;
 import uteis.Formatacao;
 
 import java.time.Instant;
@@ -14,6 +15,11 @@ import java.util.UUID;
 public class Main {
 
     private static Instant instant = Instant.now();
+
+    private static List<Estacao> estacoes = new ArrayList<>();
+    private static List<Pessoa> pessoas = new ArrayList<>();
+    private static List<Vagao> vagoes = new ArrayList<>();
+    private static List<Trem> trens = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println(UUID.randomUUID().toString());
@@ -36,9 +42,18 @@ public class Main {
     }
 
     private static void atualizarMissoes() {
-        for (Estacao e : Estacao.estacoes) {
+        for (Estacao e : estacoes) {
             for (Missao m : e.getMissoes()) {
-                m.atualizarEstado(instant);
+                if (m.getTrem() == null && instant.isAfter(m.getDataPartida())) {
+                    m.setStatusMissao(StatusMissao.CANCELADA);
+                }
+            }
+        }
+
+        for (Pessoa p : pessoas) {
+            if (p instanceof Maquinista) {
+                Maquinista maquinista = (Maquinista) p;
+                maquinista.verificarViagem(instant);
             }
         }
     }
@@ -130,7 +145,7 @@ public class Main {
         sc.nextLine();
         System.out.println("Trens:");
         System.out.println();
-        for (Trem t : Trem.trens) {
+        for (Trem t : trens) {
             String cima = "    ||";
             String meio = "[-----]";
             String baixo = " 0   0 ";
@@ -154,7 +169,7 @@ public class Main {
             System.out.println();
         }
         System.out.println("Vagões Avulso: ");
-        for (Vagao v : Vagao.vagoes) {
+        for (Vagao v : vagoes) {
             if (v.getTrem() == null) {
                 if (v instanceof VagaoPassageiro) {
                     System.out.println("-[oPassageiro]");
@@ -191,7 +206,7 @@ public class Main {
         int frota = sc.nextInt();
         Trem trem = new Trem(frota);
 
-        Trem.trens.add(trem);
+        trens.add(trem);
         System.out.println("Trem criado com sucesso!");
         sc.nextLine();
     }
@@ -204,10 +219,10 @@ public class Main {
 
         if (tipo.equals("CARGA")) {
             VagaoCarga vagaoCarga = new VagaoCarga();
-            Vagao.vagoes.add(vagaoCarga);
+            vagoes.add(vagaoCarga);
         } else if (tipo.equals("PASSAGEIRO")) {
             VagaoPassageiro vagaoPassageiro = new VagaoPassageiro();
-            Vagao.vagoes.add(vagaoPassageiro);
+            vagoes.add(vagaoPassageiro);
         } else {
             System.out.println("Tipo inválido!");
             sc.nextLine();
@@ -278,9 +293,12 @@ public class Main {
             sc.nextLine();
         }
 
-        missao.getRota().getEstacaoOrigem()
+        Ticket ticket = missao.getRota().getEstacaoOrigem()
                 .getBilheteria().emitirTicket(passageiro, missao);
-        System.out.println("Ticket emitido com sucesso!");
+
+        if (ticket != null) {
+            System.out.println("Ticket emitido com sucesso!");
+        }
         sc.nextLine();
     }
 
@@ -292,7 +310,7 @@ public class Main {
         int opcao = sc.nextInt();
 
         if (opcao == 1) {
-            for (Estacao e : Estacao.estacoes) {
+            for (Estacao e : estacoes) {
                 for (Missao m : e.getMissoes()) {
                     m.exibirInfo();
                     System.out.println();
@@ -338,6 +356,10 @@ public class Main {
             partida = LocalDate.parse(partidaString)
                     .atStartOfDay(ZoneId.systemDefault())
                     .toInstant();
+            if (partida.isBefore(Instant.now())) {
+                System.out.println("Data inválida!");
+                return;
+            }
         } catch (DateTimeParseException e) {
             System.out.println("Formato inválido!");
             return;
@@ -345,7 +367,7 @@ public class Main {
 
         System.out.println("Digite tempo de duração da viagem em dias");
         int dias = sc.nextInt();
-        Instant chegada = Instant.now()
+        Instant chegada = partida
                 .atOffset(ZoneOffset.UTC).plusDays(dias).toInstant();
 
         Missao missao = new Missao(partida, chegada, origem, destino);
@@ -414,7 +436,7 @@ public class Main {
 
         int i = 0;
 
-        for (Trem t : Trem.trens) {
+        for (Trem t : trens) {
             i++;
             System.out.println("[" + i + "] " + "[--" + t.getNumeroFrota() + "--]");
         }
@@ -422,19 +444,19 @@ public class Main {
         System.out.println("Selecione um trem");
         int index = sc.nextInt();
 
-        if (index > Trem.trens.size()) {
+        if (index > trens.size()) {
             System.out.println("Trem inválido!");
             sc.nextLine();
             return null;
         }
 
-        return Trem.trens.get(index - 1);
+        return trens.get(index - 1);
     }
 
     private static Vagao selecionarVagao(Scanner sc) {
         List<Vagao> vagoes = new ArrayList<>();
         sc.nextLine();
-        for (Vagao v : Vagao.vagoes) {
+        for (Vagao v : vagoes) {
             if (v.getTrem() == null) {
                 vagoes.add(v);
             }
@@ -469,7 +491,7 @@ public class Main {
     private static Estacao selecionarEstacao(Scanner sc, String message) {
         int i = 0;
         System.out.println();
-        for (Estacao e : Estacao.estacoes) {
+        for (Estacao e : estacoes) {
             i++;
             System.out.println("[" + i + "]: " + e.getNome());
         }
@@ -477,21 +499,21 @@ public class Main {
         System.out.println(message);
 
         int index = sc.nextInt();
-        int quantidadeEstacoes = Estacao.estacoes.size();
+        int quantidadeEstacoes = estacoes.size();
 
         if (index > quantidadeEstacoes) {
             System.out.println("Estação inválida!");
             return null;
         }
 
-        return Estacao.estacoes.get(index - 1);
+        return estacoes.get(index - 1);
     }
 
     private static Pessoa selecionarPessoa(Scanner sc, String message, Class<? extends Pessoa> tipo) {
         int i = 0;
 
         List<Pessoa> pessoas = new ArrayList<>();
-        for (Pessoa p : Pessoa.pessoas) {
+        for (Pessoa p : pessoas) {
             if (tipo.isInstance(p)) {
                 pessoas.add(p);
             }
@@ -524,7 +546,7 @@ public class Main {
 
     private static Missao selecionarMissao(Scanner sc) {
         List<Missao> missoes = new ArrayList<>();
-        for (Estacao e : Estacao.estacoes) {
+        for (Estacao e : estacoes) {
             for (Missao m : e.getMissoes()) {
                 missoes.add(m);
             }
@@ -555,7 +577,7 @@ public class Main {
 
     private static void mostrarEstacoes(Scanner sc) {
         System.out.println();
-        for (Estacao e : Estacao.estacoes) {
+        for (Estacao e : estacoes) {
             e.exibirInfo();
             System.out.println();
         }
@@ -571,7 +593,7 @@ public class Main {
 
         Estacao estacao = new Estacao(nome);
         estacao.criarBilheteria();
-        Estacao.estacoes.add(estacao);
+        estacoes.add(estacao);
         System.out.println("Estação e Bilheteria criada com sucesso");
         sc.nextLine();
     }
@@ -610,7 +632,7 @@ public class Main {
 
     private static void mostarPessoas(Scanner sc) {
         System.out.println();
-        for (Pessoa p : Pessoa.pessoas) {
+        for (Pessoa p : pessoas) {
             String tipo = "";
 
             if (p instanceof Funcionario) tipo = "Funcionario";
@@ -643,7 +665,7 @@ public class Main {
 
         Passageiro passageiro = new Passageiro(nome, cpf);
 
-        Pessoa.pessoas.add(passageiro);
+        pessoas.add(passageiro);
         System.out.println("Passageiro criado com sucesso");
         sc.nextLine();
     }
@@ -672,14 +694,14 @@ public class Main {
 
         if (maquinista) {
             Maquinista Maquinista = new Maquinista(nome, cpf);
-            Pessoa.pessoas.add(Maquinista);
+            pessoas.add(Maquinista);
             System.out.println("Maquinista criado com sucesso");
             sc.nextLine();
             return;
         }
 
         Funcionario funcionario = new Funcionario(nome, cpf);
-        Pessoa.pessoas.add(funcionario);
+        pessoas.add(funcionario);
         System.out.println("Funcionário criado com sucesso");
         sc.nextLine();
     }

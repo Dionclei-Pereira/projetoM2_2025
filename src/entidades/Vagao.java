@@ -6,8 +6,6 @@ import java.util.UUID;
 
 public class Vagao {
 
-    public static List<Vagao> vagoes = new ArrayList<Vagao>();
-
     private int idVagao;
 
     private Trem trem;
