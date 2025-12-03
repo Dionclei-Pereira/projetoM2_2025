@@ -633,22 +633,7 @@ public class Main {
     private static void mostarPessoas(Scanner sc) {
         System.out.println();
         for (Pessoa p : pessoas) {
-            String tipo = "";
-
-            if (p instanceof Funcionario) tipo = "Funcionario";
-            if (p instanceof Maquinista) tipo = "Maquinista";
-            if (p instanceof Passageiro) tipo = "Passageiro";
-
-            System.out.println("Nome: " + p.getNome());
-            System.out.println("CPF: " + p.getCpf());
-            if (p instanceof Passageiro) {
-                if (((Passageiro) p).getTicket() == null) {
-
-                } else {
-                    System.out.println("Ticket [Id da Missão]: " + ((Passageiro) p).getTicket().toString());
-                }
-            }
-            System.out.println("Tipo: " + tipo);
+            p.exibirInfo();
             System.out.println();
         }
         sc.nextLine();

@@ -14,4 +14,10 @@ public class Funcionario extends Pessoa {
     public String getMatricula() {
         return this.matricula;
     }
+
+    @Override
+    public void exibirInfo() {
+        super.exibirInfo();
+        System.out.println("Tipo: Funcionário");
+    }
 }

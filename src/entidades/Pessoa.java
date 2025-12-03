@@ -21,4 +21,8 @@ public abstract class Pessoa {
         return this.cpf;
     }
 
+    public void exibirInfo() {
+        System.out.println("Nome: " + this.nome);
+        System.out.println("CPF: " + this.cpf);
+    }
 }

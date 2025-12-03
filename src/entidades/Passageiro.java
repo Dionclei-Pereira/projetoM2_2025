@@ -16,4 +16,13 @@ public class Passageiro extends Pessoa {
         this.ticket = ticket;
     }
 
+    @Override
+    public void exibirInfo() {
+        super.exibirInfo();
+        System.out.println("Tipo: Passageiro");
+
+        if (this.ticket != null) {
+            System.out.println("Ticket [Id da Missão]: " + this.toString());
+        }
+    }
 }

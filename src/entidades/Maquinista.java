@@ -66,4 +66,10 @@ public final class Maquinista extends Funcionario{
         return this.trem;
     }
 
+    @Override
+    public void exibirInfo() {
+        System.out.println("Nome: " + getNome());
+        System.out.println("CPF: " + getCpf());
+        System.out.println("Tipo: Maquinista");
+    }
 }
