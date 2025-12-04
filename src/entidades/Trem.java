@@ -7,16 +7,14 @@ import java.util.List;
 
 public class Trem {
 
-    private int numeroFrota;
+    private String idFrota;
     private List<Vagao> vagoes = new ArrayList<>();
     private Maquinista maquinista;
     private StatusOperacional statusOperacional;
-    private double velocidadeAtual;
-    private double quilometragemTotalMetros;
     private Missao missaoAtual;
 
-    public Trem(int numeroFrota) {
-        this.numeroFrota = numeroFrota;
+    public Trem(String idFrota) {
+        this.idFrota = idFrota;
         this.statusOperacional = StatusOperacional.PARADA;
     }
 
@@ -62,8 +60,8 @@ public class Trem {
         }
     }
 
-    public int getNumeroFrota() {
-        return this.numeroFrota;
+    public String getIdFrota() {
+        return this.idFrota;
     }
 
     public Maquinista getMaquinista() {

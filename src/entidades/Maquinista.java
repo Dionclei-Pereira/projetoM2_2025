@@ -4,7 +4,7 @@ import enums.StatusMissao;
 
 import java.time.Instant;
 
-public final class Maquinista extends Funcionario{
+public final class Maquinista extends Funcionario {
 
     private Trem trem;
 

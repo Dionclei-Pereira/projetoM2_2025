@@ -159,7 +159,7 @@ public class Main {
                 }
             }
 
-            System.out.println("Frota: " + t.getNumeroFrota());
+            System.out.println("Frota: " + t.getIdFrota());
             if (t.getMissaoAtual() != null) {
                 t.getMissaoAtual().exibirInfo();
             }
@@ -202,8 +202,7 @@ public class Main {
 
     private static void criarTrem(Scanner sc) {
 
-        System.out.println("Digite o numero da frota");
-        int frota = sc.nextInt();
+        String frota = UUID.randomUUID().toString();
         Trem trem = new Trem(frota);
 
         trens.add(trem);
@@ -438,7 +437,7 @@ public class Main {
 
         for (Trem t : trens) {
             i++;
-            System.out.println("[" + i + "] " + "[--" + t.getNumeroFrota() + "--]");
+            System.out.println("[" + i + "] " + "[--" + t.getIdFrota() + "--]");
         }
 
         System.out.println("Selecione um trem");
@@ -519,6 +518,11 @@ public class Main {
             }
         }
 
+        if (pessoas.isEmpty()) {
+            System.out.println("Não há passageiros no sistema.");
+            return null;
+        }
+
         for (Pessoa p : pessoas) {
             i++;
             System.out.println("[" + i + "]: " + p.getNome());
@@ -577,9 +581,13 @@ public class Main {
 
     private static void mostrarEstacoes(Scanner sc) {
         System.out.println();
-        for (Estacao e : estacoes) {
-            e.exibirInfo();
-            System.out.println();
+        if (estacoes.isEmpty()) {
+            System.out.println("Não há estações no sistema.");
+        } else {
+            for (Estacao e : estacoes) {
+                e.exibirInfo();
+                System.out.println();
+            }
         }
 
         sc.nextLine();
@@ -632,9 +640,13 @@ public class Main {
 
     private static void mostarPessoas(Scanner sc) {
         System.out.println();
-        for (Pessoa p : pessoas) {
-            p.exibirInfo();
-            System.out.println();
+        if (pessoas.isEmpty()) {
+            System.out.println("Não há pessoas no sistema.");
+        } else {
+            for (Pessoa p : pessoas) {
+                p.exibirInfo();
+                System.out.println();
+            }
         }
         sc.nextLine();
         sc.nextLine();
