@@ -25,6 +25,7 @@ public class Trem {
         if (this.statusOperacional != StatusOperacional.EM_VIAGEM) {
             if (!this.vagoes.contains(vagao)) {
                 this.vagoes.add(vagao);
+                vagao.setTrem(this);
             } else {
                 System.out.println("Este vagão já esta em um trem");
             }
@@ -37,6 +38,7 @@ public class Trem {
         if (this.statusOperacional != StatusOperacional.EM_VIAGEM) {
             if (this.vagoes.contains(vagao)) {
                 this.vagoes.remove(vagao);
+                vagao.setTrem(null);
             } else {
                 System.out.println("O vagão não pertence a esse trem");
             }

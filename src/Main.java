@@ -1,6 +1,7 @@
 import entidades.*;
 import enums.StatusMissao;
 import enums.StatusOperacional;
+import enums.TipoCarga;
 import uteis.Formatacao;
 
 import java.time.Instant;
@@ -236,9 +237,32 @@ public class Main {
 
         if (tipo.equals("CARGA")) {
             VagaoCarga vagaoCarga = new VagaoCarga();
+
+            System.out.println("Qual tipo de carga? [ALIMENTO. COMBUSTIVEL. MATERIAL. RADIOATIVA]");
+
+            String tipoCargaStr = sc.nextLine();
+
+            try {
+                TipoCarga tipoCarga = TipoCarga.valueOf(tipoCargaStr.toUpperCase());
+
+                System.out.println("Digite a quantidade em KG");
+                double quantidade = sc.nextDouble();
+
+                Carga carga = new Carga(tipoCarga, quantidade);
+
+                vagaoCarga.carregar(carga);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Tipo inválido!");
+                return;
+            }
+
             vagoes.add(vagaoCarga);
         } else if (tipo.equals("PASSAGEIRO")) {
-            VagaoPassageiro vagaoPassageiro = new VagaoPassageiro();
+            System.out.println("Digite a capacidade maxima do vagão");
+
+            int capacidade = sc.nextInt();
+
+            VagaoPassageiro vagaoPassageiro = new VagaoPassageiro(capacidade);
             vagoes.add(vagaoPassageiro);
         } else {
             System.out.println("Tipo inválido!");
@@ -737,12 +761,8 @@ public class Main {
     }
 
     private static boolean isVagaoEmUso(Vagao vagao) {
-        for (Trem t : trens) {
-            if (t.getVagoes().contains(vagao)) {
-                return true;
-            }
-        }
-        return false;
+        if (vagao.getTrem() == null) return false;
+        return true;
     }
 
 }

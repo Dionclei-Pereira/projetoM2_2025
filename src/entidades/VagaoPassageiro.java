@@ -5,11 +5,12 @@ import java.util.List;
 
 public class VagaoPassageiro extends Vagao {
 
-    private final int capacidade = 10;
+    private int capacidade;
     private List<Passageiro> passageiros = new ArrayList<>();
 
-    public VagaoPassageiro() {
+    public VagaoPassageiro(int capacidade) {
         super();
+        this.capacidade = capacidade;
     }
 
     public boolean temEspaco() {

@@ -5,12 +5,12 @@ import java.util.UUID;
 public class Ticket {
 
     private String idTicket;
-    private Missao missao;
+    private String idMissao;
     private Passageiro passageiro;
 
     public Ticket(Missao missao, Passageiro passageiro) {
         this.idTicket = UUID.randomUUID().toString();
-        this.missao = missao;
+        this.idMissao = missao.getIdMissao();
         this.passageiro = passageiro;
         passageiro.setTicket(this);
     }
@@ -21,6 +21,6 @@ public class Ticket {
 
     @Override
     public String toString() {
-        return this.missao.getIdMissao();
+        return this.idMissao;
     }
 }

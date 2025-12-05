@@ -9,10 +9,15 @@ public class VagaoCarga extends Vagao {
     }
 
     public void carregar(Carga carga) {
+        carga.setVagaoCarga(this);
         this.carga = carga;
     }
 
     public void descarregar(Carga carga) {
         this.carga = null;
+    }
+
+    public Carga getCarga() {
+        return this.carga;
     }
 }
