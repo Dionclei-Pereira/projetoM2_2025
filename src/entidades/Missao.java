@@ -45,6 +45,12 @@ public class Missao {
         this.trem = null;
     }
 
+    public void cancelar() {
+        this.statusMissao = StatusMissao.CANCELADA;
+        for (Ticket ticket : this.tickets) {
+            ticket.getPassageiro().setTicket(null);
+        }
+    }
 
     public void embarcarPassageiros() {
         for (Ticket ticket : this.tickets) {

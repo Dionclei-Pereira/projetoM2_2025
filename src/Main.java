@@ -54,7 +54,7 @@ public class Main {
         // Cancelar missões sem trem
         for (Missao m : missoes) {
             if (m.getTrem() == null && instant.isAfter(m.getDataPartida())) {
-                m.setStatusMissao(StatusMissao.CANCELADA);
+                m.cancelar();
             }
         }
 
