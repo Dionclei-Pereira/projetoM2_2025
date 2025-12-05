@@ -12,4 +12,7 @@ public abstract class Vagao {
         this.idVagao = UUID.randomUUID().toString();
     }
 
+    public String getIdVagao() {
+        return idVagao;
+    }
 }

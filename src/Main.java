@@ -43,18 +43,20 @@ public class Main {
     }
 
     private static void atualizarMissoes() {
+        Missao missaoEncontrada = null;
         for (Estacao e : estacoes) {
             for (Missao m : e.getMissoes()) {
                 if (m.getTrem() == null && instant.isAfter(m.getDataPartida())) {
                     m.setStatusMissao(StatusMissao.CANCELADA);
+                    missaoEncontrada = m;
                 }
             }
         }
 
         for (Pessoa p : pessoas) {
-            if (p instanceof Maquinista) {
+            if (p instanceof Maquinista && missaoEncontrada != null) {
                 Maquinista maquinista = (Maquinista) p;
-                maquinista.verificarViagem(instant);
+                maquinista.verificarViagem(missaoEncontrada, instant);
             }
         }
     }
@@ -161,8 +163,13 @@ public class Main {
             }
 
             System.out.println("Frota: " + t.getIdFrota());
-            if (t.getMissaoAtual() != null) {
-                t.getMissaoAtual().exibirInfo();
+            System.out.println("Status: " + t.getStatusOperacional());
+            Missao missao = getMissaoDoTrem(t);
+            if (missao != null) {
+                System.out.print("Missão Atual: ");
+                missao.exibirInfo();
+            } else {
+                System.out.println("Missão Atual: Nenhuma (Disponível)");
             }
             System.out.println(cima);
             System.out.println(meio);
@@ -171,7 +178,7 @@ public class Main {
         }
         System.out.println("Vagões Avulso: ");
         for (Vagao v : vagoes) {
-            if (v.getTrem() == null) {
+            if (!isVagaoEmUso(v)) {
                 if (v instanceof VagaoPassageiro) {
                     System.out.println("-[oPassageiro]");
                     System.out.println("  0         0");
@@ -421,13 +428,12 @@ public class Main {
             return;
         }
 
-        if (trem.getMissaoAtual() != null) {
+        if (getMissaoDoTrem(trem) != null) {
             System.out.println("Este trem já possui uma missão!");
             sc.nextLine();
             return;
         }
 
-        trem.setMissaoAtual(missao);
         System.out.println("Missão associada com sucesso!");
         sc.nextLine();
     }
@@ -454,17 +460,17 @@ public class Main {
     }
 
     private static Vagao selecionarVagao(Scanner sc) {
-        List<Vagao> vagoes2 = new ArrayList<>();
+        List<Vagao> vagoesDisponiveis = new ArrayList<>();
         sc.nextLine();
         for (Vagao v : vagoes) {
-            if (v.getTrem() == null) {
-                vagoes2.add(v);
+            if (!isVagaoEmUso(v)) {
+                vagoesDisponiveis.add(v);
             };
         }
 
         int i = 0;
 
-        for (Vagao v : vagoes2) {
+        for (Vagao v : vagoesDisponiveis) {
             i++;
             String tipo;
 
@@ -480,13 +486,13 @@ public class Main {
         System.out.println("Selecione um vagão");
         int index = sc.nextInt();
 
-        if (index > vagoes2.size() || index == 0) {
+        if (index > vagoesDisponiveis.size() || index == 0) {
             System.out.println("Vagão inválido!");
             sc.nextLine();
             return null;
         }
 
-        return vagoes2.get(index - 1);
+        return vagoesDisponiveis.get(index - 1);
     }
 
     private static Estacao selecionarEstacao(Scanner sc, String message) {
@@ -703,6 +709,27 @@ public class Main {
         pessoas.add(funcionario);
         System.out.println("Funcionário criado com sucesso");
         sc.nextLine();
+    }
+
+    private static Missao getMissaoDoTrem(Trem trem) {
+        for (Estacao e : estacoes) {
+            for (Missao m : e.getMissoes()) {
+                if (m.getTrem() == trem &&
+                        (m.getStatusMissao() == StatusMissao.AGENDADA || m.getStatusMissao() == StatusMissao.EM_CURSO)) {
+                    return m;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean isVagaoEmUso(Vagao vagao) {
+        for (Trem t : trens) {
+            if (t.getVagoes().contains(vagao)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
