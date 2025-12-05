@@ -26,7 +26,6 @@ public class Main {
         System.out.println(UUID.randomUUID().toString());
 
         Scanner sc = new Scanner(System.in);
-        Instant instant = Instant.now();
 
         boolean continuar = true;
         while (continuar) {
@@ -43,20 +42,31 @@ public class Main {
     }
 
     private static void atualizarMissoes() {
-        Missao missaoEncontrada = null;
-        for (Estacao e : estacoes) {
-            for (Missao m : e.getMissoes()) {
-                if (m.getTrem() == null && instant.isAfter(m.getDataPartida())) {
-                    m.setStatusMissao(StatusMissao.CANCELADA);
-                    missaoEncontrada = m;
-                }
+        List<Missao> missoes = new ArrayList<>();
+
+        for (Estacao estacao : estacoes) {
+            for (Missao missao : estacao.getMissoes()) {
+                missoes.add(missao);
             }
         }
 
-        for (Pessoa p : pessoas) {
-            if (p instanceof Maquinista && missaoEncontrada != null) {
-                Maquinista maquinista = (Maquinista) p;
-                maquinista.verificarViagem(missaoEncontrada, instant);
+        // Cancelar missões sem trem
+        for (Missao m : missoes) {
+            if (m.getTrem() == null && instant.isAfter(m.getDataPartida())) {
+                m.setStatusMissao(StatusMissao.CANCELADA);
+            }
+        }
+
+
+        for (Trem t : trens) {
+            Missao m = getMissaoDoTrem(t);
+            for (Pessoa p : pessoas) {
+                if (p instanceof Maquinista) {
+                    Maquinista maquinista = (Maquinista) p;
+                    if (maquinista.getTrem() == t) {
+                        maquinista.verificarViagem(m, instant);
+                    }
+                }
             }
         }
     }
@@ -107,7 +117,7 @@ public class Main {
             System.out.println("1 - Criar Trem");
             System.out.println("2 - Criar Vagão");
             System.out.println("3 - Associar Vagão");
-            System.out.println("3 - Associar Missão");
+            System.out.println("4 - Associar Missão");
             System.out.println("5 - Associar Maquinista");
             System.out.println("6 - Mostrar Trens e Vagões");
             System.out.println("0 - Voltar");
@@ -128,7 +138,7 @@ public class Main {
                     associarMissao(sc);
                     break;
                 case 5:
-                    assosiarMaquinista(sc);
+                    associarMaquinista(sc);
                     break;
                 case 6:
                     mostrarTrensVagoes(sc);
@@ -384,7 +394,7 @@ public class Main {
         sc.nextLine();
     }
 
-    private static void assosiarMaquinista(Scanner sc) {
+    private static void associarMaquinista(Scanner sc) {
         sc.nextLine();
         Maquinista maquinista = (Maquinista) selecionarPessoa(sc, "Selecione um maquinista", Maquinista.class);
         if (maquinista == null) {
@@ -434,6 +444,8 @@ public class Main {
             return;
         }
 
+        missao.setTrem(trem);
+
         System.out.println("Missão associada com sucesso!");
         sc.nextLine();
     }
@@ -450,7 +462,7 @@ public class Main {
         System.out.println("Selecione um trem");
         int index = sc.nextInt();
 
-        if (index > trens.size()) {
+        if (index > trens.size() || index <= 0) {
             System.out.println("Trem inválido!");
             sc.nextLine();
             return null;
@@ -465,7 +477,8 @@ public class Main {
         for (Vagao v : vagoes) {
             if (!isVagaoEmUso(v)) {
                 vagoesDisponiveis.add(v);
-            };
+            }
+            ;
         }
 
         int i = 0;
@@ -486,7 +499,7 @@ public class Main {
         System.out.println("Selecione um vagão");
         int index = sc.nextInt();
 
-        if (index > vagoesDisponiveis.size() || index == 0) {
+        if (index > vagoesDisponiveis.size() || index <= 0) {
             System.out.println("Vagão inválido!");
             sc.nextLine();
             return null;
@@ -508,7 +521,7 @@ public class Main {
         int index = sc.nextInt();
         int quantidadeEstacoes = estacoes.size();
 
-        if (index > quantidadeEstacoes) {
+        if (index > quantidadeEstacoes ||  index <= 0) {
             System.out.println("Estação inválida!");
             return null;
         }
@@ -539,7 +552,7 @@ public class Main {
         System.out.println(message);
 
         int index = sc.nextInt();
-        if (index > pessoas2.size()) {
+        if (index > pessoas2.size() || index <= 0) {
             System.out.println("Pessoa inválida");
             sc.nextLine();
             return null;
@@ -576,7 +589,7 @@ public class Main {
 
         int index = sc.nextInt();
 
-        if (index > missoes.size()) {
+        if (index > missoes.size() || index <= 0) {
             System.out.println("Missão inválida");
             sc.nextLine();
             return null;
