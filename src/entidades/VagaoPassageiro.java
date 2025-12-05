@@ -25,4 +25,7 @@ public class VagaoPassageiro extends Vagao {
         this.passageiros.clear();
     }
 
+    public List<Passageiro> getPassageiros() {
+        return this.passageiros;
+    }
 }

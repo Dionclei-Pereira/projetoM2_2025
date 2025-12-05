@@ -1,6 +1,7 @@
 package entidades;
 
 import enums.StatusMissao;
+import enums.StatusOperacional;
 
 import java.time.Instant;
 
@@ -14,17 +15,18 @@ public final class Maquinista extends Funcionario {
 
     private void realizarViagem(Missao missao) {
         missao.embarcarPassageiros();
-
+        this.trem.setStatusOperacional(StatusOperacional.EM_VIAGEM);
         missao.setStatusMissao(StatusMissao.EM_CURSO);
         System.out.println("Missão: " + missao.getIdMissao() + " iniciada pelo maquinista: " + this.getNome());
     }
 
     private void finalizarViagem(Missao missao) {
         missao.finalizarMissao();
+        this.trem.setStatusOperacional(StatusOperacional.PARADA);
     }
 
     public void verificarViagem(Missao missao, Instant instant) {
-        if (this.trem == null) {
+        if (this.trem == null || missao == null) {
             return;
         }
 

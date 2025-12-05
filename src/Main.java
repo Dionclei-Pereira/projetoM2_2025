@@ -320,6 +320,7 @@ public class Main {
         Missao missao = selecionarMissao(sc);
         if (missao == null) {
             sc.nextLine();
+            return;
         }
 
         Passageiro passageiro = (Passageiro) selecionarPessoa(sc, "Selecione o usuario que ira comprar o Ticket", Passageiro.class);
@@ -564,7 +565,7 @@ public class Main {
         }
 
         if (pessoas2.isEmpty()) {
-            System.out.println("Não há passageiros no sistema.");
+            System.out.println("Não há pessoas disponiveis no sistema.");
             return null;
         }
 

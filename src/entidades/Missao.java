@@ -35,6 +35,9 @@ public class Missao {
 
         for (Vagao v : this.trem.getVagoes()) {
             if (v instanceof VagaoPassageiro) {
+                for (Passageiro passageiro : ((VagaoPassageiro) v).getPassageiros()) {
+                    passageiro.setTicket(null);
+                }
                 ((VagaoPassageiro) v).limparVagao();
             }
         }
