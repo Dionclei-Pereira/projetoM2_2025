@@ -1,5 +1,6 @@
 import entidades.*;
 import enums.StatusMissao;
+import enums.StatusOperacional;
 import uteis.Formatacao;
 
 import java.time.Instant;
@@ -273,8 +274,14 @@ public class Main {
 
     private static void criarTicket(Scanner sc) {
         sc.nextLine();
-        Passageiro passageiro = (Passageiro) selecionarPessoa(sc, "Selecione o usuario que ira comprar o Ticket", Passageiro.class);
 
+
+        Missao missao = selecionarMissao(sc);
+        if (missao == null) {
+            sc.nextLine();
+        }
+
+        Passageiro passageiro = (Passageiro) selecionarPessoa(sc, "Selecione o usuario que ira comprar o Ticket", Passageiro.class);
         if (passageiro == null) {
             sc.nextLine();
             return;
@@ -284,12 +291,6 @@ public class Main {
             System.out.println("Passageiro já tem um Ticket!");
             sc.nextLine();
             return;
-        }
-
-        Missao missao = selecionarMissao(sc);
-
-        if (missao == null) {
-            sc.nextLine();
         }
 
         Ticket ticket = missao.getRota().getEstacaoOrigem()
@@ -453,17 +454,17 @@ public class Main {
     }
 
     private static Vagao selecionarVagao(Scanner sc) {
-        List<Vagao> vagoes = new ArrayList<>();
+        List<Vagao> vagoes2 = new ArrayList<>();
         sc.nextLine();
         for (Vagao v : vagoes) {
             if (v.getTrem() == null) {
-                vagoes.add(v);
-            }
+                vagoes2.add(v);
+            };
         }
 
         int i = 0;
 
-        for (Vagao v : vagoes) {
+        for (Vagao v : vagoes2) {
             i++;
             String tipo;
 
@@ -475,16 +476,17 @@ public class Main {
             System.out.println("[" + i + "] " + "[" + tipo + "]");
         }
 
+
         System.out.println("Selecione um vagão");
         int index = sc.nextInt();
 
-        if (index > vagoes.size()) {
+        if (index > vagoes2.size() || index == 0) {
             System.out.println("Vagão inválido!");
             sc.nextLine();
             return null;
         }
 
-        return vagoes.get(index - 1);
+        return vagoes2.get(index - 1);
     }
 
     private static Estacao selecionarEstacao(Scanner sc, String message) {
@@ -511,19 +513,19 @@ public class Main {
     private static Pessoa selecionarPessoa(Scanner sc, String message, Class<? extends Pessoa> tipo) {
         int i = 0;
 
-        List<Pessoa> pessoas = new ArrayList<>();
+        List<Pessoa> pessoas2 = new ArrayList<>();
         for (Pessoa p : pessoas) {
             if (tipo.isInstance(p)) {
-                pessoas.add(p);
+                pessoas2.add(p);
             }
         }
 
-        if (pessoas.isEmpty()) {
+        if (pessoas2.isEmpty()) {
             System.out.println("Não há passageiros no sistema.");
             return null;
         }
 
-        for (Pessoa p : pessoas) {
+        for (Pessoa p : pessoas2) {
             i++;
             System.out.println("[" + i + "]: " + p.getNome());
         }
@@ -531,13 +533,13 @@ public class Main {
         System.out.println(message);
 
         int index = sc.nextInt();
-        if (index > pessoas.size()) {
+        if (index > pessoas2.size()) {
             System.out.println("Pessoa inválida");
             sc.nextLine();
             return null;
         }
 
-        Pessoa pessoa = pessoas.get(index - 1);
+        Pessoa pessoa = pessoas2.get(index - 1);
 
         if (tipo.isInstance(pessoa)) {
             return pessoa;

@@ -23,4 +23,5 @@ public class VagaoPassageiro extends Vagao {
     public void limparVagao() {
         this.passageiros.clear();
     }
+
 }

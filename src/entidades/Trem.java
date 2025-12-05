@@ -72,4 +72,8 @@ public class Trem {
         this.maquinista = maquinista;
         maquinista.setTrem(this);
     }
+
+    public StatusOperacional getStatusOperacional() {
+        return statusOperacional;
+    }
 }

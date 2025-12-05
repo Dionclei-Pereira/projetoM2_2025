@@ -10,7 +10,6 @@ public final class Maquinista extends Funcionario {
 
     public Maquinista(String nome, String cpf) {
         super(nome, cpf);
-        this.trem = trem;
     }
 
     private void realizarViagem() {
