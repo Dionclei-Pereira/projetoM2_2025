@@ -13,6 +13,6 @@ public class VagaoCarga extends Vagao {
     }
 
     public void descarregar(Carga carga) {
-        this.carga = carga;
+        this.carga = null;
     }
 }

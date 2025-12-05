@@ -12,28 +12,24 @@ public final class Maquinista extends Funcionario {
         super(nome, cpf);
     }
 
-    private void realizarViagem() {
-
-        Missao missao = this.trem.getMissaoAtual();
-
+    private void realizarViagem(Missao missao) {
         missao.embarcarPassageiros();
 
         missao.setStatusMissao(StatusMissao.EM_CURSO);
         System.out.println("Missão: " + missao.getIdMissao() + " iniciada pelo maquinista: " + this.getNome());
     }
 
-    private void finalizarViagem() {
-        Missao missao = this.trem.getMissaoAtual();
+    private void finalizarViagem(Missao missao) {
         missao.finalizarMissao();
     }
 
-    public void verificarViagem(Instant instant) {
+    public void verificarViagem(Missao missao, Instant instant) {
         if (this.trem == null) {
             return;
         }
 
-        Missao missao = this.trem.getMissaoAtual();
-        if (missao == null) {
+        if (missao.getTrem() != this.getTrem()) {
+            System.out.println("Esta missão não pertence ao trem deste maquinista.");
             return;
         }
 
@@ -42,13 +38,13 @@ public final class Maquinista extends Funcionario {
         switch (status) {
             case AGENDADA:
                 if (!instant.isBefore(missao.getDataPartida())) {
-                    this.realizarViagem();
+                    this.realizarViagem(missao);
                 }
                 break;
 
             case EM_CURSO:
                 if (!instant.isBefore(missao.getDataChegada())) {
-                    this.finalizarViagem();
+                    this.finalizarViagem(missao);
                     System.out.println("Missão: " + missao.getIdMissao() + " Finalizada pelo maquinista: " + this.getNome());
                 } else {
                     System.out.println("Missão: " + missao.getIdMissao() + " Segue em viagem");

@@ -1,6 +1,7 @@
 package entidades;
 
 import enums.StatusMissao;
+import enums.StatusOperacional;
 import uteis.Formatacao;
 
 import java.time.Instant;
@@ -30,7 +31,7 @@ public class Missao {
 
     public void finalizarMissao() {
         this.statusMissao = StatusMissao.CONCLUIDA;
-        this.trem.setMissaoAtual(null);
+        this.trem.setStatusOperacional(StatusOperacional.PARADA);
 
         for (Vagao v : this.trem.getVagoes()) {
             if (v instanceof VagaoPassageiro) {

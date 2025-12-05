@@ -11,7 +11,6 @@ public class Trem {
     private List<Vagao> vagoes = new ArrayList<>();
     private Maquinista maquinista;
     private StatusOperacional statusOperacional;
-    private Missao missaoAtual;
 
     public Trem(String idFrota) {
         this.idFrota = idFrota;
@@ -22,23 +21,10 @@ public class Trem {
         return this.vagoes;
     }
 
-    public Missao getMissaoAtual() {
-        return this.missaoAtual;
-    }
-
-    public void setMissaoAtual(Missao missao) {
-        this.missaoAtual = missao;
-
-        if (missao != null) {
-            missao.setTrem(this);
-        }
-    }
-
     public void engatarVagao(Vagao vagao) {
         if (this.statusOperacional != StatusOperacional.EM_VIAGEM) {
-            if (vagao.getTrem() == null) {
+            if (!this.vagoes.contains(vagao)) {
                 this.vagoes.add(vagao);
-                vagao.setTrem(this);
             } else {
                 System.out.println("Este vagão já esta em um trem");
             }
@@ -49,9 +35,8 @@ public class Trem {
 
     public void desengatarVagao(Vagao vagao) {
         if (this.statusOperacional != StatusOperacional.EM_VIAGEM) {
-            if (vagao.getTrem() == this) {
+            if (this.vagoes.contains(vagao)) {
                 this.vagoes.remove(vagao);
-                vagao.setTrem(null);
             } else {
                 System.out.println("O vagão não pertence a esse trem");
             }
@@ -75,5 +60,9 @@ public class Trem {
 
     public StatusOperacional getStatusOperacional() {
         return statusOperacional;
+    }
+
+    public void setStatusOperacional(StatusOperacional statusOperacional) {
+        this.statusOperacional = statusOperacional;
     }
 }

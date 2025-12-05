@@ -22,7 +22,7 @@ public class Passageiro extends Pessoa {
         System.out.println("Tipo: Passageiro");
 
         if (this.ticket != null) {
-            System.out.println("Ticket [Id da Missão]: " + this.toString());
+            System.out.println("Ticket [Id da Missão]: " + this.ticket.toString());
         }
     }
 }

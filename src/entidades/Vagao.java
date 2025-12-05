@@ -6,19 +6,10 @@ import java.util.UUID;
 
 public abstract class Vagao {
 
-    private int idVagao;
-
-    private Trem trem;
+    private String idVagao;
 
     public Vagao() {
-        this.idVagao = UUID.randomUUID().hashCode();
+        this.idVagao = UUID.randomUUID().toString();
     }
 
-    public void setTrem(Trem trem) {
-        this.trem = trem;
-    }
-
-    public Trem getTrem() {
-        return this.trem;
-    }
 }

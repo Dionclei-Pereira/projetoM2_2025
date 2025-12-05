@@ -8,7 +8,7 @@ public class Estacao {
 
     private String idEstacao;
     private Bilheteria bilheteria;
-    private List<Missao> missoes = new ArrayList();
+    private List<Missao> missoes = new ArrayList<>();
     private String nome;
 
     public Estacao(String nome) {

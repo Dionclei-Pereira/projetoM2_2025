@@ -4,9 +4,9 @@ import enums.TipoCarga;
 
 public class Carga {
     private TipoCarga tipoCarga;
-    private int quantidadeKg;
+    private double quantidadeKg;
 
-    public Carga(TipoCarga tipoCarga, int quantidade) {
+    public Carga(TipoCarga tipoCarga, double quantidadeKg) {
         this.tipoCarga = tipoCarga;
         this.quantidadeKg = quantidadeKg;
     }
@@ -15,7 +15,7 @@ public class Carga {
         return this.tipoCarga;
     }
 
-    public int getQuantidadeKg() {
+    public double getQuantidadeKg() {
         return this.quantidadeKg;
     }
 }
